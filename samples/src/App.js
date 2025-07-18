@@ -1223,83 +1223,71 @@ const CorporateESGDashboard = () => {
   );
 };
 
-// 4. 협회 관리 대시보드
+// 4. 새마을중앙회 대시보드
 const AssociationDashboard = () => {
-  const memberData = useMemo(() => 
+  const memberData = useMemo(() =>
     Array.from({ length: 12 }, (_, i) => ({
       month: `${i + 1}월`,
-      totalMembers: 2650 + i * 47 + Math.floor(Math.random() * 20),
-      activeMembers: 2280 + i * 42 + Math.floor(Math.random() * 15),
-      newMembers: Math.floor(Math.random() * 80) + 35
+      totalMembers: 4870000 + i * 15000 + Math.floor(Math.random() * 8000),
+      activeMembers: 3980000 + i * 12000 + Math.floor(Math.random() * 5000),
+      newMembers: Math.floor(Math.random() * 20000) + 5000
     })), []
   );
 
-  // 현실적인 산업별 데이터 (한국 제조업 기준)
-  const industryPerformance = [
-    { 
-      industry: '전자·정보통신', 
-      members: 342, 
-      avgESG: 76.8, 
-      improvement: 4.2, 
-      carbonIntensity: 3.1,
-      description: '반도체, 디스플레이, 모바일 기기 등을 포함하는 최대 업종입니다.'
+  // 지역별 새마을 운동 현황
+  const regionalPerformance = [
+    {
+      region: '서울/경기',
+      members: 1250000,
+      energySavingRate: 12.5,
+      recyclingRate: 85.2,
+      description: '수도권 지역은 인구 밀도가 높아 1인당 에너지 절약 성과가 높게 나타납니다.'
     },
-    { 
-      industry: '자동차', 
-      members: 189, 
-      avgESG: 79.4, 
-      improvement: 6.8, 
-      carbonIntensity: 5.7,
-      description: '전기차 전환과 친환경 소재 적용으로 ESG 개선이 두드러집니다.'
+    {
+      region: '강원/충청',
+      members: 890000,
+      energySavingRate: 15.2,
+      recyclingRate: 89.1,
+      description: '농촌 지역의 적극적인 참여로 재활용 및 자원순환 활동이 활발합니다.'
     },
-    { 
-      industry: '화학', 
-      members: 156, 
-      avgESG: 72.1, 
-      improvement: 3.8, 
-      carbonIntensity: 8.9,
-      description: '높은 탄소 집약도로 인해 탄소중립 전환이 시급한 업종입니다.'
+    {
+      region: '전라/제주',
+      members: 780000,
+      energySavingRate: 14.8,
+      recyclingRate: 91.3,
+      description: '청정 지역 특성을 살린 친환경 캠페인이 높은 참여율을 보입니다.'
     },
-    { 
-      industry: '철강', 
-      members: 94, 
-      avgESG: 69.3, 
-      improvement: 2.9, 
-      carbonIntensity: 12.4,
-      description: '수소환원제철 등 혁신기술 도입을 통한 탈탄소화가 핵심 과제입니다.'
+    {
+      region: '경상',
+      members: 1150000,
+      energySavingRate: 13.1,
+      recyclingRate: 87.5,
+      description: '새마을 운동 발상지로서, 조직적인 활동을 통해 높은 성과를 유지하고 있습니다.'
     },
-    { 
-      industry: '기계', 
-      members: 278, 
-      avgESG: 74.6, 
-      improvement: 5.1, 
-      carbonIntensity: 4.2,
-      description: '스마트 제조와 에너지 효율 개선으로 꾸준한 ESG 성과를 보입니다.'
-    }
   ];
 
-  // 현실적인 서비스 이용률
-  const serviceUtilization = [
-    { name: 'ESG 컨설팅', usage: 67.3, satisfaction: 4.2, participants: 623 },
-    { name: '탄소 거래 중개', usage: 43.8, satisfaction: 4.0, participants: 405 },
-    { name: '규정 준수 지원', usage: 84.7, satisfaction: 4.5, participants: 783 },
-    { name: '교육 프로그램', usage: 58.9, satisfaction: 4.3, participants: 545 },
-    { name: '인증 지원', usage: 35.2, satisfaction: 4.1, participants: 326 }
+  // 주요 활동 참여율 및 만족도
+  const activityUtilization = [
+    { name: '새마을의 날 기념행사', usage: 88.2, satisfaction: 4.8, participants: 120500 },
+    { name: '에너지 절약 교육', usage: 65.4, satisfaction: 4.5, participants: 897000 },
+    { name: '재활용 캠페인', usage: 92.1, satisfaction: 4.7, participants: 1543000 },
+    { name: '지역사회 봉사', usage: 78.9, satisfaction: 4.6, participants: 1125000 },
+    { name: '탄소중립 실천 인증', usage: 45.3, satisfaction: 4.3, participants: 458000 }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-orange-900 to-red-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-yellow-900 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* 헤더 */}
-        <div className="glass-card p-6 border border-gray-700/50 rounded-xl bg-gradient-to-r from-orange-800/50 to-red-800/50">
+        <div className="glass-card p-6 border border-gray-700/50 rounded-xl bg-gradient-to-r from-green-800/50 to-yellow-800/50">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-4xl font-bold text-white">한국제조업협회 ESG 지원센터</h1>
-              <p className="text-orange-200 mt-1">회원사 탄소중립 통합 지원 시스템</p>
+              <h1 className="text-4xl font-bold text-white">새마을중앙회 탄소중립 실천</h1>
+              <p className="text-yellow-200 mt-1">국민과 함께하는 탄소중립 운동</p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-white">3,059개사</div>
-              <div className="text-sm text-gray-300">활성 회원사 2,634개 (86.1%)</div>
+              <div className="text-2xl font-bold text-white">4,875,321명</div>
+              <div className="text-sm text-gray-300">활성 회원 3,981,456명 (81.7%)</div>
             </div>
           </div>
         </div>
@@ -1307,117 +1295,115 @@ const AssociationDashboard = () => {
         {/* 핵심 지표 */}
         <div className="grid grid-cols-5 gap-4">
           <MetricCard
-            title="총 회원사"
-            value={3059}
-            unit="개사"
+            title="총 회원"
+            value={4875321}
+            unit="명"
             trend="up"
-            icon={<Icons.Building />}
-            subtitle="신규 가입 +47개사"
-            description="제조업 분야 회원사입니다. 대기업, 중견기업, 중소기업을 모두 포함합니다."
-          />
-          <MetricCard
-            title="ESG 평가 완료"
-            value={2634}
-            unit="개사"
-            icon={<Icons.Shield />}
-            subtitle="평가율 86.1%"
-            description="ESG 리스크 평가를 완료한 회원사 수입니다. 환경, 사회, 지배구조 3개 영역 67개 항목을 평가합니다."
-            comparison={{ type: 'better', text: '업계 평균 73% 대비 우수' }}
-          />
-          <MetricCard
-            title="탄소중립 로드맵 수립"
-            value={1870}
-            unit="개사"
-            icon={<Icons.Leaf />}
-            subtitle="진행률 61.1%"
-            description="탄소중립 로드맵 수립을 완료한 회원사 수입니다. 2050 탄소중립 목표 달성을 위한 구체적인 계획을 포함합니다."
-            comparison={{ type: 'better', text: '전년 대비 25% 증가' }}
-          />
-          <MetricCard
-            title="재생에너지 전환"
-            value={980}
-            unit="개사"
-            icon={<Icons.Zap />}
-            subtitle="전환율 32.0%"
-            description="RE100 또는 재생에너지 사용 목표를 설정하고 전환을 시작한 회원사 수입니다. 태양광 설치, REC 구매, PPA 체결 등을 포함합니다."
-            comparison={{ type: 'better', text: '전년 대비 40% 증가' }}
-          />
-          <MetricCard
-            title="ESG 교육 이수"
-            value={2150}
-            unit="개사"
             icon={<Icons.Users />}
-            subtitle="이수율 70.3%"
-            description="협회 ESG 교육 프로그램을 이수한 회원사 수입니다. ESG 경영 역량 강화를 위한 필수 교육입니다."
-            comparison={{ type: 'better', text: '온라인 교육 만족도 4.7/5.0' }}
+            subtitle="신규 가입 +18,432명"
+            description="새마을운동에 동참하는 전국 회원 수입니다."
+          />
+          <MetricCard
+            title="탄소중립 실천 서약"
+            value={3981456}
+            unit="명"
+            icon={<Icons.Leaf />}
+            subtitle="서약률 81.7%"
+            description="탄소중립 생활 실천을 서약한 회원 수입니다."
+            comparison={{ type: 'better', text: '전년 대비 15% 증가' }}
+          />
+          <MetricCard
+            title="에너지 절약 캠페인"
+            value={2154890}
+            unit="명 참여"
+            icon={<Icons.Zap />}
+            subtitle="참여율 54.1%"
+            description="가정, 직장에서의 에너지 절약 캠페인에 참여한 회원 수입니다."
+            comparison={{ type: 'better', text: '전년 대비 22% 증가' }}
+          />
+          <MetricCard
+            title="재활용/자원순환 활동"
+            value={3543210}
+            unit="명 참여"
+            icon={<Icons.Shield />}
+            subtitle="참여율 89.0%"
+            description="재활용 분리배출, 자원순환 캠페인 등 관련 활동 참여 회원 수입니다."
+            comparison={{ type: 'better', text: '가장 활발한 활동' }}
+          />
+          <MetricCard
+            title="새마을 교육 이수"
+            value={1876543}
+            unit="명"
+            icon={<Icons.Award />}
+            subtitle="이수율 47.1%"
+            description="새마을 정신과 탄소중립 관련 교육을 이수한 회원 수입니다."
+            comparison={{ type: 'better', text: '온라인 교육 만족도 4.6/5.0' }}
           />
         </div>
 
-        {/* 월별 회원사 현황 */}
+        {/* 월별 회원 현황 */}
         <div className="glass-card p-6 border border-gray-700/50 rounded-xl bg-gradient-to-br from-gray-800/50 to-gray-900/50">
-          <h3 className="text-lg font-semibold text-white mb-4">월별 회원사 현황</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">월별 회원 현황</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={memberData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis dataKey="month" stroke="#9CA3AF" />
-              <YAxis stroke="#9CA3AF" />
-              <Tooltip content={<CustomTooltip description="월별 총 회원사, 활성 회원사, 신규 회원사 현황입니다. 꾸준한 회원사 증가 추세를 보입니다." />} />
+              <YAxis tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`} stroke="#9CA3AF" />
+              <Tooltip content={<CustomTooltip description="월별 총 회원, 활성 회원, 신규 회원 현황입니다." />} />
               <Legend />
-              <Line type="monotone" dataKey="totalMembers" stroke="#8884d8" name="총 회원사" />
-              <Line type="monotone" dataKey="activeMembers" stroke="#82ca9d" name="활성 회원사" />
-              <Line type="monotone" dataKey="newMembers" stroke="#ffc658" name="신규 회원사" />
+              <Line type="monotone" dataKey="totalMembers" stroke="#8884d8" name="총 회원" />
+              <Line type="monotone" dataKey="activeMembers" stroke="#82ca9d" name="활성 회원" />
+              <Line type="monotone" dataKey="newMembers" stroke="#ffc658" name="신규 회원" />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
-        {/* 산업별 ESG 성과 */}
+        {/* 지역별 새마을 운동 현황 */}
         <div className="glass-card p-6 border border-gray-700/50 rounded-xl bg-gradient-to-br from-gray-800/50 to-gray-900/50">
-          <h3 className="text-lg font-semibold text-white mb-4">산업별 ESG 성과 및 탄소 집약도</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">지역별 새마을 운동 현황</h3>
           <div className="space-y-4">
-            {industryPerformance.map((industry, index) => (
-              <div 
-                key={index} 
+            {regionalPerformance.map((region, index) => (
+              <div
+                key={index}
                 className="p-4 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer group relative"
               >
                 <div className="flex justify-between items-center mb-2">
-                  <h4 className="text-white font-medium">{industry.industry}</h4>
+                  <h4 className="text-white font-medium">{region.region}</h4>
                   <div className="flex items-center space-x-4">
-                    <span className="text-sm text-gray-400">회원사: {industry.members}개사</span>
-                    <span className="text-sm text-gray-400">평균 ESG: <span className="text-emerald-400 font-medium">{industry.avgESG}</span></span>
+                    <span className="text-sm text-gray-400">회원: {region.members.toLocaleString()}명</span>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <div className="text-gray-400">ESG 개선율</div>
-                    <div className="text-white">{industry.improvement}%</div>
+                    <div className="text-gray-400">에너지 절약률</div>
+                    <div className="text-white">{region.energySavingRate}%</div>
                   </div>
                   <div>
-                    <div className="text-gray-400">탄소 집약도</div>
-                    <div className="text-white">{industry.carbonIntensity} tCO2e/억</div>
+                    <div className="text-gray-400">재활용 실천율</div>
+                    <div className="text-white">{region.recyclingRate}%</div>
                   </div>
                 </div>
-                
-                {/* 산업별 상세 설명 툴팁 */}
+
                 <div className="absolute left-0 bottom-full mb-2 w-96 bg-gray-800 border border-gray-600 rounded-lg p-4 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
-                  <h4 className="text-white font-medium mb-2">{industry.industry} 산업 분석</h4>
-                  <p className="text-gray-300 text-sm">{industry.description}</p>
+                  <h4 className="text-white font-medium mb-2">{region.region} 지역 분석</h4>
+                  <p className="text-gray-300 text-sm">{region.description}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* 서비스 이용률 및 만족도 */}
+        {/* 주요 활동 참여율 및 만족도 */}
         <div className="glass-card p-6 border border-gray-700/50 rounded-xl bg-gradient-to-br from-gray-800/50 to-gray-900/50">
-          <h3 className="text-lg font-semibold text-white mb-4">주요 서비스 이용률 및 만족도</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">주요 활동 참여율 및 만족도</h3>
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={serviceUtilization}>
+            <BarChart data={activityUtilization}>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis dataKey="name" stroke="#9CA3AF" />
-              <YAxis stroke="#9CA3AF" />
-              <Tooltip content={<CustomTooltip description="협회에서 제공하는 주요 서비스의 이용률과 만족도입니다. 회원사들의 ESG 경영 역량 강화를 위해 지속적으로 서비스를 개선하고 있습니다." />} wrapperStyle={{ zIndex: 9999 }} />
+              <YAxis />
+              <Tooltip content={<CustomTooltip description="주요 활동별 참여율과 만족도입니다." />} wrapperStyle={{ zIndex: 9999 }} />
               <Legend />
-              <Bar dataKey="usage" fill="#3B82F6" name="이용률 (%)" />
+              <Bar dataKey="usage" fill="#3B82F6" name="참여율 (%)" />
               <Bar dataKey="satisfaction" fill="#10B981" name="만족도 (5점 만점)" />
             </BarChart>
           </ResponsiveContainer>
@@ -1435,7 +1421,7 @@ const App = () => {
     { id: 'platform', name: '플랫폼 관제실', component: PlatformControlDashboard },
     { id: 'municipal', name: '지자체 대시보드', component: MunicipalDashboard },
     { id: 'corporate', name: '기업 ESG', component: CorporateESGDashboard },
-    { id: 'association', name: '협회 관리', component: AssociationDashboard }, // 협회 관리 대시보드 추가
+    { id: 'association', name: '새마을중앙회', component: AssociationDashboard },
   ];
 
   const CurrentComponent = dashboards.find(d => d.id === currentDashboard)?.component || PlatformControlDashboard;
@@ -1445,7 +1431,7 @@ const App = () => {
       <nav className="bg-gray-800/50 backdrop-blur-lg border-b border-gray-700 p-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <Icons.Leaf />
+            <img src="/namuplanet_logo_1571904598.webp" alt="Namuplanet Logo" className="h-8 w-auto" />
             <span className="text-xl font-bold text-white">Cypress Carbon Grid</span>
           </div>
           <div className="flex space-x-1">
