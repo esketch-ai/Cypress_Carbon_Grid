@@ -129,6 +129,37 @@ const RealTimeAlert = ({ alerts = [] }) => (
   </div>
 );
 
+const ProjectListModal = ({ isOpen, onClose, projects, title }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+      <div className="glass-card p-8 border border-gray-700/50 rounded-xl bg-gradient-to-br from-gray-800/70 to-gray-900/70 w-11/12 md:w-2/3 lg:w-1/2 max-h-[90vh] overflow-y-auto relative">
+        <h2 className="text-2xl font-bold text-white mb-6">{title}</h2>
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white text-3xl">&times;</button>
+        <div className="space-y-4">
+          {projects.length > 0 ? projects.map((project, index) => (
+            <div key={index} className="p-4 border border-gray-700 rounded-lg bg-gray-800/50 flex justify-between items-center">
+              <div>
+                <h4 className="text-lg font-medium text-white">{project.name}</h4>
+                <p className="text-sm text-gray-400">기간: {project.startDate} ~ {project.endDate}</p>
+                <p className="text-sm text-gray-300 mt-1">{project.description}</p>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                project.status === '완료' ? 'bg-green-500/20 text-green-400' : 'bg-blue-500/20 text-blue-400'
+              }`}>
+                {project.status}
+              </span>
+            </div>
+          )) : (
+            <p className="text-gray-400 text-center py-8">프로젝트가 없습니다.</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // 1. 플랫폼 통합 관제 대시보드
 const PlatformControlDashboard = () => {
   const [realTimeData, setRealTimeData] = useState(generateRealisticData());
@@ -268,84 +299,151 @@ const PlatformControlDashboard = () => {
           </div>
           
           <RealTimeAlert alerts={alerts} />
-        </div>
+        {/* 정책 효과 및 스마트 그린 인프라 */}
+        <div className="grid grid-cols-2 gap-6">
+          <div className="glass-card p-6 border border-gray-700/50 rounded-xl bg-gradient-to-br from-gray-800/50 to-gray-900/50">
+            <h3 className="text-lg font-semibold text-white mb-4">주요 정책 효과 (2024년 기준)</h3>
+            <div className="space-y-4">
+              {[
+                { 
+                  name: '친환경차 구매 지원', 
+                  budget: '약 850억원', 
+                  reduction: '47,300 tCO2/년', 
+                  efficiency: '180만원/tCO2', 
+                  status: 'success',
+                  description: '전기차 구매보조금, 충전인프라 구축 등을 통해 수송부문 배출량을 연간 4.7만톤 감축했습니다.'
+                },
+                { 
+                  name: '건물 에너지효율 개선', 
+                  budget: '약 1,240억원', 
+                  reduction: '89,600 tCO2/년', 
+                  efficiency: '138만원/tCO2', 
+                  status: 'success',
+                  description: 'BRP(건물 리노베이션 사업)을 통해 노후 건물의 에너지효율을 평균 32% 개선했습니다.'
+                },
+                { 
+                  name: '대중교통 전환 확대', 
+                  budget: '약 2,180억원', 
+                  reduction: '156,800 tCO2/년', 
+                  efficiency: '139만원/tCO2', 
+                  status: 'progress',
+                  description: '지하철 연장, 전기버스 도입, 자전거 도로 확충으로 대중교통 분담률을 68%까지 높였습니다.'
+                }
+              ].map((policy, index) => (
+                <div 
+                  key={index} 
+                  className="p-4 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer group relative"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="text-white font-medium">{policy.name}</h4>
+                    <div className={`px-2 py-1 rounded text-xs ${
+                      policy.status === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
+                    }`}>
+                      {policy.status === 'success' ? '목표 초과달성' : '순조 진행'}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <div className="text-gray-400">총 예산</div>
+                      <div className="text-white">{policy.budget}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-400">연간 감축량</div>
+                      <div className="text-white">{policy.reduction}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-400">감축 단가</div>
+                      <div className="text-white">{policy.efficiency}</div>
+                    </div>
+                  </div>
+                  
+                  {/* 정책 상세 설명 툴팁 */}
+                  <div className="absolute left-0 bottom-full mb-2 w-80 bg-gray-800 border border-gray-600 rounded-lg p-4 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
+                    <h4 className="text-white font-medium mb-2">{policy.name}</h4>
+                    <p className="text-gray-300 text-sm">{policy.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-        {/* 엔진 성능 모니터링 */}
-        <div className="grid grid-cols-4 gap-4">
-          {[
-            { 
-              name: 'Data Ingestion', 
-              status: 'healthy', 
-              performance: 97.8, 
-              throughput: '1.2M/h',
-              description: '실시간 데이터 수집 엔진 - IoT 센서, API, 파일 업로드 등 모든 데이터 소스로부터 시간당 120만 건의 데이터를 처리합니다.'
-            },
-            { 
-              name: 'AI Intelligence', 
-              status: 'warning', 
-              performance: 89.2, 
-              throughput: '847/s',
-              description: 'AI 분석 엔진 - TCN-LSTM 모델로 배출량 예측, 이상 탐지, 최적화를 수행합니다. GPU 사용률 85% 도달로 스케일링 중입니다.'
-            },
-            { 
-              name: 'Trading Engine', 
-              status: 'healthy', 
-              performance: 99.3, 
-              throughput: '12.5K/s',
-              description: '탄소 거래 엔진 - 다층 탄소 시장에서 초당 12,500건의 주문을 처리합니다. 지연시간 < 50ms 유지.'
-            },
-            { 
-              name: 'Compliance', 
-              status: 'healthy', 
-              performance: 96.1, 
-              throughput: '99.7%',
-              description: '규정 준수 엔진 - UNFCCC, EU CBAM, K-Taxonomy 등 다중 표준을 자동으로 준수합니다. 보고서 생성 성공률 99.7%.'
-            }
-          ].map((engine, index) => (
-            <div 
-              key={index} 
-              className="glass-card p-4 border border-gray-700/50 rounded-xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 relative group cursor-pointer"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-medium text-white">{engine.name}</h4>
-                <div className={`w-3 h-3 rounded-full ${
-                  engine.status === 'healthy' ? 'bg-green-500' :
-                  engine.status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'
-                }`}></div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-400 text-xs">성능</span>
-                  <span className="text-white text-sm">{engine.performance}%</span>
+          <div className="glass-card p-6 border border-gray-700/50 rounded-xl bg-gradient-to-br from-gray-800/50 to-gray-900/50">
+            <h3 className="text-lg font-semibold text-white mb-4">스마트 그린 인프라</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <div className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer group relative">
+                  <div className="text-sm text-gray-400">태양광 발전</div>
+                  <div className="text-xl text-white font-bold">673 MW</div>
+                  <div className="text-xs text-green-400">+84 MW vs 2023년</div>
+                  
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
+                    <p className="text-gray-300 text-xs">서울시 전체 태양광 설치 용량입니다. 가정용 미니태양광, 건물일체형(BIPV), 수상태양광을 포함합니다.</p>
+                  </div>
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full ${
-                      engine.performance > 95 ? 'bg-green-500' :
-                      engine.performance > 85 ? 'bg-yellow-500' : 'bg-red-500'
-                    }`}
-                    style={{ width: `${engine.performance}%` }}
-                  ></div>
+                <div className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer group relative">
+                  <div className="text-sm text-gray-400">전기버스</div>
+                  <div className="text-xl text-white font-bold">1,247 대</div>
+                  <div className="text-xs text-green-400">전체의 15.7%</div>
+                  
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
+                    <p className="text-gray-300 text-xs">서울시 시내버스 중 전기버스 비율입니다. 2026년까지 50% 전환을 목표로 하고 있습니다.</p>
+                  </div>
                 </div>
-                <div className="text-xs text-gray-400">처리량: {engine.throughput}</div>
               </div>
-              
-              {/* 엔진별 상세 툴팁 */}
-              <div className="absolute bottom-full left-0 mb-2 w-80 bg-gray-800 border border-gray-600 rounded-lg p-4 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
-                <h4 className="text-white font-medium mb-2">{engine.name} 상세 정보</h4>
-                <p className="text-gray-300 text-sm leading-relaxed">{engine.description}</p>
+              <div className="space-y-3">
+                <div className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer group relative">
+                  <div className="text-sm text-gray-400">전기차 충전소</div>
+                  <div className="text-xl text-white font-bold">4,589 기</div>
+                  <div className="text-xs text-blue-400">이용률 71.3%</div>
+                  
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
+                    <p className="text-gray-300 text-xs">급속충전 2,340기, 완속충전 2,249기로 구성됩니다. 주요 거점과 주거지역을 중심으로 배치되었습니다.</p>
+                  </div>
+                </div>
+                <div className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer group relative">
+                  <div className="text-sm text-gray-400">녹색건물 인증</div>
+                  <div className="text-xl text-white font-bold">2,847 동</div>
+                  <div className="text-xs text-green-400">G-SEED 인증</div>
+                  
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
+                    <p className="text-gray-300 text-xs">녹색건축인증(G-SEED)을 받은 건물 수입니다. 에너지 효율 등급 1등급 이상 건물이 78%를 차지합니다.</p>
+                  </div>
+                </div>
               </div>
             </div>
-          ))}
+          </div>
         </div>
+
+        {/* 프로젝트 리스트 모달 */}
+        <ProjectListModal
+          isOpen={showProjectsModal}
+          onClose={() => setShowProjectsModal(false)}
+          projects={completedProjects}
+          title="완료 프로젝트 목록"
+        />
       </div>
     </div>
   );
 };
 
+// 3. 기업 ESG 대시보드
+
 // 2. 지자체 전용 대시보드
 const MunicipalDashboard = () => {
   const [selectedSector, setSelectedSector] = useState('transport');
+  const [showProjectsModal, setShowProjectsModal] = useState(false);
+
+  const completedProjects = [
+    { name: '태양광 발전소 설치 (강남구)', status: '완료', startDate: '2023-03-01', endDate: '2023-09-30', description: '강남구 내 공공건물 옥상에 500kW 규모 태양광 발전소 설치.' },
+    { name: '노후 건물 에너지 효율 개선 (영등포구)', status: '완료', startDate: '2022-07-01', endDate: '2024-01-31', description: '영등포구 내 10개 노후 건물 단열 및 창호 교체, 고효율 설비 도입.' },
+    { name: '전기버스 도입 확대 (송파구)', status: '완료', startDate: '2023-01-01', endDate: '2023-12-31', description: '송파구 시내버스 노선에 전기버스 30대 추가 도입 및 충전 인프라 확충.' },
+    { name: '도시 숲 조성 (마포구)', status: '완료', startDate: '2023-04-01', endDate: '2023-11-30', description: '마포구 유휴 부지에 10,000m² 규모의 도시 숲 조성, 탄소 흡수원 증대.' },
+    { name: '자전거 도로 확충 (서초구)', status: '완료', startDate: '2022-09-01', endDate: '2023-06-30', description: '서초구 주요 간선도로에 자전거 전용 도로 5km 신설 및 공유 자전거 시스템 확대.' },
+    { name: '스마트 가로등 교체 (종로구)', status: '완료', startDate: '2023-05-01', endDate: '2023-10-31', description: '종로구 일대 가로등을 고효율 LED 스마트 가로등으로 교체, 에너지 절감 및 범죄 예방 효과.' },
+    { name: '빗물 재활용 시스템 구축 (동대문구)', status: '완료', startDate: '2023-02-01', endDate: '2023-08-31', description: '동대문구 공공시설에 빗물 재활용 시스템 도입, 조경 용수 및 청소 용수로 활용.' },
+    { name: '친환경 에너지 자립마을 조성 (은평구)', status: '진행중', startDate: '2024-01-01', endDate: '2025-12-31', description: '은평구 일부 마을에 태양광 패널 설치 및 에너지 저장 시스템 구축, 에너지 자립률 향상.' },
+    { name: '제로 웨이스트 상점 확대 (성동구)', status: '진행중', startDate: '2024-03-01', endDate: '2024-12-31', description: '성동구 내 제로 웨이스트 상점 10개소 추가 지정 및 시민 참여 프로그램 운영.' },
+  ];
   
   // 서울시 현실적인 배출량 데이터 (연간 약 4천만톤 기준)
   const carbonData = useMemo(() => 
@@ -424,6 +522,7 @@ const MunicipalDashboard = () => {
             subtitle="진행중 89개"
             description="완료된 탄소 감축 프로젝트 수입니다. 태양광 설치, 건물 리모델링, 전기버스 도입, 녹색교통지역 조성 등을 포함합니다."
             comparison={{ type: 'better', text: '2024년 목표 94% 달성' }}
+            onClick={() => setShowProjectsModal(true)}
           />
         </div>
 
@@ -605,12 +704,18 @@ const MunicipalDashboard = () => {
             </div>
           </div>
         </div>
+
+        {/* 프로젝트 리스트 모달 */}
+        <ProjectListModal
+          isOpen={showProjectsModal}
+          onClose={() => setShowProjectsModal(false)}
+          projects={completedProjects}
+          title="완료 프로젝트 목록"
+        />
       </div>
     </div>
   );
 };
-
-// 3. 기업 ESG 대시보드
 const CorporateESGDashboard = () => {
   const [selectedView, setSelectedView] = useState('overview');
   
