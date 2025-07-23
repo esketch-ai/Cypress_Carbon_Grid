@@ -23,6 +23,20 @@ Cypress Carbon Grid is a comprehensive, real-time dashboard for monitoring and m
 - **Styling:** Tailwind CSS
 - **Containerization:** Docker, Docker Compose
 
+## Running on Replit
+
+This project can be run directly on Replit. 
+
+1.  **Import from GitHub:** Create a new Replit workspace by importing this repository directly from GitHub.
+2.  **Click "Run":** Once the workspace is loaded, click the "Run" button. Replit will automatically install Docker and use `docker-compose` to build and start the application.
+3.  **Set up the database:** When the application is running, open a new shell tab and run the following command to set up the database:
+
+    ```bash
+    docker-compose exec app ./bin/rails db:create db:migrate
+    ```
+
+    The application will be available at the URL provided by Replit.
+
 ## Getting Started
 
 This project is configured to run in a Docker container, which simplifies setup and ensures a consistent development environment.
