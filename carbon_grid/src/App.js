@@ -492,32 +492,7 @@ const PlatformControlDashboard = () => {
           <div className="glass-card p-6 border border-gray-700/50 rounded-xl bg-gradient-to-br from-gray-800/50 to-gray-900/50">
             <h3 className="text-lg font-semibold text-white mb-4">주요 정책 효과 (2024년 기준)</h3>
             <div className="space-y-4">
-              {[
-                { 
-                  name: '친환경차 구매 지원', 
-                  budget: '약 850억원', 
-                  reduction: '47,300 tCO2/년', 
-                  efficiency: '180만원/tCO2', 
-                  status: 'success',
-                  description: '전기차 구매보조금, 충전인프라 구축 등을 통해 수송부문 배출량을 연간 4.7만톤 감축했습니다.'
-                },
-                { 
-                  name: '건물 에너지효율 개선', 
-                  budget: '약 1,240억원', 
-                  reduction: '89,600 tCO2/년', 
-                  efficiency: '138만원/tCO2', 
-                  status: 'success',
-                  description: 'BRP(건물 리노베이션 사업)을 통해 노후 건물의 에너지효율을 평균 32% 개선했습니다.'
-                },
-                { 
-                  name: '대중교통 전환 확대', 
-                  budget: '약 2,180억원', 
-                  reduction: '156,800 tCO2/년', 
-                  efficiency: '139만원/tCO2', 
-                  status: 'progress',
-                  description: '지하철 연장, 전기버스 도입, 자전거 도로 확충으로 대중교통 분담률을 68%까지 높였습니다.'
-                }
-              ].map((policy, index) => (
+              {policyEffects.map((policy, index) => (
                 <div 
                   key={index} 
                   className="p-4 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer group relative"
@@ -559,46 +534,17 @@ const PlatformControlDashboard = () => {
           <div className="glass-card p-6 border border-gray-700/50 rounded-xl bg-gradient-to-br from-gray-800/50 to-gray-900/50">
             <h3 className="text-lg font-semibold text-white mb-4">스마트 그린 인프라</h3>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-3">
-                <div className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer group relative">
-                  <div className="text-sm text-gray-400">태양광 발전</div>
-                  <div className="text-xl text-white font-bold">673 MW</div>
-                  <div className="text-xs text-green-400">+84 MW vs 2023년</div>
+              {infrastructureMetrics.map((item, index) => (
+                <div key={index} className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer group relative">
+                  <div className="text-sm text-gray-400">{item.name}</div>
+                  <div className="text-xl text-white font-bold">{item.value} {item.unit}</div>
+                  <div className="text-xs text-green-400">{item.change}</div>
                   
                   <div className="absolute top-full left-0 mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
-                    <p className="text-gray-300 text-xs">서울시 전체 태양광 설치 용량입니다. 가정용 미니태양광, 건물일체형(BIPV), 수상태양광을 포함합니다.</p>
+                    <p className="text-gray-300 text-xs">{item.description}</p>
                   </div>
                 </div>
-                <div className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer group relative">
-                  <div className="text-sm text-gray-400">전기버스</div>
-                  <div className="text-xl text-white font-bold">1,247 대</div>
-                  <div className="text-xs text-green-400">전체의 15.7%</div>
-                  
-                  <div className="absolute top-full left-0 mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
-                    <p className="text-gray-300 text-xs">서울시 시내버스 중 전기버스 비율입니다. 2026년까지 50% 전환을 목표로 하고 있습니다.</p>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer group relative">
-                  <div className="text-sm text-gray-400">전기차 충전소</div>
-                  <div className="text-xl text-white font-bold">4,589 기</div>
-                  <div className="text-xs text-blue-400">이용률 71.3%</div>
-                  
-                  <div className="absolute top-full left-0 mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
-                    <p className="text-gray-300 text-xs">급속충전 2,340기, 완속충전 2,249기로 구성됩니다. 주요 거점과 주거지역을 중심으로 배치되었습니다.</p>
-                  </div>
-                </div>
-                <div className="p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors cursor-pointer group relative">
-                  <div className="text-sm text-gray-400">녹색건물 인증</div>
-                  <div className="text-xl text-white font-bold">2,847 동</div>
-                  <div className="text-xs text-green-400">G-SEED 인증</div>
-                  
-                  <div className="absolute top-full left-0 mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
-                    <p className="text-gray-300 text-xs">녹색건축인증(G-SEED)을 받은 건물 수입니다. 에너지 효율 등급 1등급 이상 건물이 78%를 차지합니다.</p>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>

@@ -13,6 +13,7 @@ if is_port_in_use 3000; then
   echo "Rails server already running on port 3000."
 else
   echo "Starting Rails server..."
+  bundle config set --local path vendor/bundle
   bundle install
   rails db:migrate
   rails db:seed
