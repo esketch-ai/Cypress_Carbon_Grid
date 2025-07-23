@@ -21,17 +21,16 @@ Cypress Carbon Grid is a comprehensive, real-time dashboard for monitoring and m
 - **Frontend:** React (Create React App)
 - **Database:** PostgreSQL
 - **Styling:** Tailwind CSS
+- **Containerization:** Docker, Docker Compose
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+This project is configured to run in a Docker container, which simplifies setup and ensures a consistent development environment.
 
 ### Prerequisites
 
-- **Ruby:** Version 3.2.2 (as specified in `.ruby-version`)
-- **Node.js:** A recent version of Node.js and npm.
-- **PostgreSQL:** A running PostgreSQL server.
-- **Homebrew (macOS):** For managing services like PostgreSQL.
+- **Docker:** [Install Docker](https://docs.docker.com/get-docker/)
+- **Docker Compose:** [Install Docker Compose](https://docs.docker.com/compose/install/) (usually included with Docker Desktop)
 
 ### Installation & Setup
 
@@ -42,69 +41,39 @@ These instructions will get you a copy of the project up and running on your loc
     cd carbon_grid
     ```
 
-2.  **Install backend dependencies:**
+2.  **Build and start the Docker containers:**
+
+    This command will build the Docker image for the application and start the `app` and `db` services.
 
     ```bash
-    bundle install
+    docker-compose up --build
     ```
 
-3.  **Install frontend dependencies:**
+3.  **Set up the database:**
 
-    The React application is located in the `samples` directory.
+    In a separate terminal window, run the following command to create and migrate the database:
 
     ```bash
-    cd samples
-    npm install
-    cd ..
+    docker-compose exec app ./bin/rails db:create db:migrate
     ```
 
-4.  **Set up the database:**
+    The application should now be running at `http://localhost:3000`.
 
-    Make sure your PostgreSQL server is running. If you are using Homebrew on macOS, you can start it with:
+### Common Docker Commands
 
-    ```bash
-    brew services start postgresql@14
-    ```
-
-    Then, create and migrate the database:
-
-    ```bash
-    ./bin/rails db:create
-    ./bin/rails db:migrate
-    ```
-
-5.  **Build the React application:**
-
-    ```bash
-    cd samples
-    npm run build
-    cd ..
-    ```
-
-6.  **Copy the built frontend to the `public` directory:**
-
-    This allows Rails to serve the React application.
-
-    ```bash
-    cp -r samples/build/* public/
-    ```
-
-7.  **Start the Rails server:**
-
-    ```bash
-    ./bin/dev
-    ```
-
-    The application should now be running at `http://127.0.0.1:3000`.
+- **Start the application:** `docker-compose up`
+- **Stop the application:** `docker-compose down`
+- **Run a command in the app container:** `docker-compose exec app <command>` (e.g., `docker-compose exec app ./bin/rails c`)
+- **View logs:** `docker-compose logs -f app`
 
 ## How to Run the Test Suite
 
 To run the test suite, use the following command:
 
 ```bash
-./bin/rails test
+docker-compose exec app ./bin/rails test
 ```
 
 ## Deployment
 
-Deployment instructions will be added here in the future.
+This project is configured for deployment using [Kamal](https://kamal-deploy.org/). The deployment configuration can be found in `config/deploy.yml`.
