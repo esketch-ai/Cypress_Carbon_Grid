@@ -1,17 +1,16 @@
 default: &default
-  adapter: postgresql
-  encoding: unicode
+  adapter: sqlite3
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  url: <%= ENV.fetch("DATABASE_URL") %>
+  timeout: 5000
 
 development:
   <<: *default
-  database: carbon_grid_development
+  database: db/development.sqlite3
 
 test:
   <<: *default
-  database: carbon_grid_test
+  database: db/test.sqlite3
 
 production:
   <<: *default
-  database: carbon_grid_production
+  database: db/production.sqlite3

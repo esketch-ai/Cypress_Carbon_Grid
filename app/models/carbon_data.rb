@@ -1,0 +1,2 @@
+class CarbonData < ApplicationRecord
+end

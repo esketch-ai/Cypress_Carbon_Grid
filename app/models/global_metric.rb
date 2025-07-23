@@ -1,0 +1,2 @@
+class GlobalMetric < ApplicationRecord
+end

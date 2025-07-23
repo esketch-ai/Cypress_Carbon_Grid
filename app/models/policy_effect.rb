@@ -1,0 +1,2 @@
+class PolicyEffect < ApplicationRecord
+end

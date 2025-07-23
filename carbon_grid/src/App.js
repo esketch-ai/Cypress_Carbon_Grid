@@ -17,25 +17,7 @@ const Icons = {
   Truck: () => <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">🚛</div>
 };
 
-// 현실적인 Mock 데이터 생성기: 실시간 탄소 배출량 및 감축량 데이터를 생성합니다.
-const generateRealisticData = () => {
-  const now = new Date();
-  const hours = Array.from({ length: 24 }, (_, i) => {
-    const time = new Date(now.getTime() - (23 - i) * 60 * 60 * 1000);
-    // 한국 전체 일일 배출량 기준 (약 1.8백만톤/일)
-    const baseEmission = 1800000 + Math.sin(i * Math.PI / 12) * 200000; // 시간대별 변동
-    const noise = (Math.random() - 0.5) * 100000;
-    
-    return {
-      time: time.getHours() + ':00',
-      emissions: Math.floor(baseEmission + noise),
-      reductions: Math.floor(baseEmission * 0.08 + Math.random() * baseEmission * 0.02), // 8-10% 감축
-      trading: Math.floor(Math.random() * 50000) + 20000, // 2-7만톤 거래
-      price: (42.5 + Math.sin(i * Math.PI / 8) * 5 + (Math.random() - 0.5) * 3).toFixed(2)
-    };
-  });
-  return hours;
-};
+
 
 // 커스텀 툴팁 컴포넌트: 차트 데이터에 마우스를 올렸을 때 표시되는 정보창입니다.
 const CustomTooltip = ({ active, payload, label, description }) => {
@@ -170,52 +152,240 @@ const ProjectListModal = ({ isOpen, onClose, projects, title }) => {
   );
 };
 
+const MunicipalDashboard = () => {
+  const [municipalities, setMunicipalities] = useState([]);
+  const [selectedCity, setSelectedCity] = useState('서울특별시');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch('/api/v1/municipalities');
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+        setMunicipalities(data);
+      } catch (e) {
+        setError(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const cityData = municipalities.find(m => m.name === selectedCity);
+
+  if (loading) {
+    return <div className="min-h-screen bg-gradient-to-br from-gray-900 via-teal-900 to-cyan-900 p-6 text-white text-center">데이터 로딩 중...</div>;
+  }
+
+  if (error) {
+    return <div className="min-h-screen bg-gradient-to-br from-gray-900 via-teal-900 to-cyan-900 p-6 text-red-500 text-center">데이터 로딩 오류: {error.message}</div>;
+  }
+
+  if (!cityData) {
+    return <div className="min-h-screen bg-gradient-to-br from-gray-900 via-teal-900 to-cyan-900 p-6 text-white text-center">선택된 도시의 데이터를 찾을 수 없습니다.</div>;
+  }
+
+  const reductionData = [
+    { name: '감축 목표', value: cityData.reduction_target, fill: '#8884d8' },
+    { name: '현재 감축률', value: cityData.current_reduction, fill: '#82ca9d' },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-teal-900 to-cyan-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header with Dropdown */}
+        <div className="glass-card p-6 border border-gray-700/50 rounded-xl flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-white">{selectedCity} 탄소중립 대시보드</h1>
+          <div className="relative">
+            <select
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value)}
+              className="bg-gray-800/50 text-white border border-gray-600 rounded-lg px-4 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            >
+              {municipalities.map(city => (
+                <option key={city.name} value={city.name}>{city.name}</option>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+              <svg className="w-4 h-4 fill-current text-gray-400" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard title="인구" value={cityData.population} unit="명" icon={<Icons.Users />} description={`현재 ${selectedCity}의 인구입니다.`} />
+          <MetricCard title="총 탄소배출량" value={cityData.carbon_emission} unit="tCO2/년" icon={<Icons.Factory />} description={`${selectedCity}의 연간 총 탄소 배출량입니다.`} />
+          <MetricCard title="재생에너지 비율" value={cityData.renewable_energy_rate} unit="%" icon={<Icons.Zap />} trend="up" description={`${selectedCity}의 전력 자급률 중 재생에너지 비율입니다.`} />
+          <MetricCard title="대중교통 분담률" value={cityData.public_transport_rate} unit="%" icon={<Icons.Truck />} trend="up" description={`${selectedCity}의 교통수단 중 대중교통 분담률입니다.`} />
+        </div>
+
+        {/* Charts and Lists */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="lg:col-span-3 glass-card p-6 border border-gray-700/50 rounded-xl">
+            <h3 className="text-lg font-semibold text-white mb-4">주요 추진 프로젝트</h3>
+             <div className="space-y-4">
+              {cityData.projects.map((project, index) => (
+                <div key={index} className="space-y-2 group cursor-pointer relative">
+                  <div className="flex justify-between items-center">
+                    <span className="text-white font-medium">{project.name}</span>
+                    <span className="text-sm text-gray-400">{project.type}</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-3">
+                    <div
+                      className="bg-cyan-500 h-3 rounded-full"
+                      style={{ width: `${project.progress}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-sm text-gray-400 flex justify-between">
+                    <span>진행률: {project.progress}%</span>
+                    <span>예상 감축량: {project.reduction}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="lg:col-span-2 glass-card p-6 border border-gray-700/50 rounded-xl">
+            <h3 className="text-lg font-semibold text-white mb-4">감축 목표 진행률</h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={reductionData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis type="number" stroke="#9CA3AF" domain={[0, 100]} />
+                <YAxis type="category" dataKey="name" stroke="#9CA3AF" width={80} />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="value" barSize={20} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="lg:col-span-2 glass-card p-6 border border-gray-700/50 rounded-xl">
+            <h3 className="text-lg font-semibold text-white mb-4">부문별 탄소 배출량 (일평균, 천톤)</h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <PieChart>
+                <Pie data={cityData.sector_emissions} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} fill="#8884d8" label />
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="lg:col-span-3 glass-card p-6 border border-gray-700/50 rounded-xl">
+            <h3 className="text-lg font-semibold text-white mb-4">구별 시민 참여 현황</h3>
+            <div className="space-y-3">
+              {cityData.citizen_participation.map((item, index) => (
+                <div key={index} className="flex justify-between items-center p-3 bg-gray-800/50 rounded-lg">
+                  <div className="flex items-center">
+                    <span className="text-lg font-bold text-cyan-400 mr-4">{item.rank}</span>
+                    <span className="text-white font-medium">{item.name}</span>
+                  </div>
+                  <span className="text-white">{item.rate}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // 1. 플랫폼 통합 관제 대시보드 컴포넌트
 // 글로벌 탄소 배출량, 감축률, 활성 프로젝트 등 주요 지표를 실시간으로 모니터링합니다.
 const PlatformControlDashboard = () => {
-  const [realTimeData, setRealTimeData] = useState(generateRealisticData()); // 실시간 데이터
-  const [currentTime, setCurrentTime] = useState(new Date()); // 현재 시간
+  const [carbonData, setCarbonData] = useState([]);
+  const [globalMetrics, setGlobalMetrics] = useState({});
+  const [alerts, setAlerts] = useState([]);
+  const [policyEffects, setPolicyEffects] = useState([]);
+  const [infrastructureMetrics, setInfrastructureMetrics] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [showProjectsModal, setShowProjectsModal] = useState(false);
 
-  // 5초마다 데이터를 업데이트하는 효과 훅
+  const completedProjects = [
+    { name: '프로젝트 A', startDate: '2023-01-01', endDate: '2023-12-31', description: '프로젝트 A 설명', status: '완료' },
+    { name: '프로젝트 B', startDate: '2023-01-01', endDate: '2023-12-31', description: '프로젝트 B 설명', status: '완료' },
+  ];
+
+  const realTimeData = useMemo(() => 
+    Array.from({ length: 12 }, (_, i) => ({
+      time: `${i + 1}월`,
+      emissions: Math.floor(Math.random() * 1000) + 500,
+      reductions: Math.floor(Math.random() * 500) + 100,
+    })), []
+  );
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setRealTimeData(generateRealisticData());
+    const fetchData = async () => {
+      try {
+        const [carbonRes, globalMetricsRes, alertsRes, policyEffectsRes, infrastructureMetricsRes] = await Promise.all([
+          fetch('/api/v1/carbon_data'),
+          fetch('/api/v1/global_metrics'),
+          fetch('/api/v1/alerts'),
+          fetch('/api/v1/policy_effects'),
+          fetch('/api/v1/infrastructure_metrics'),
+        ]);
+
+        if (!carbonRes.ok) throw new Error(`HTTP error! status: ${carbonRes.status} for carbon_data`);
+        if (!globalMetricsRes.ok) throw new Error(`HTTP error! status: ${globalMetricsRes.status} for global_metrics`);
+        if (!alertsRes.ok) throw new Error(`HTTP error! status: ${alertsRes.status} for alerts`);
+        if (!policyEffectsRes.ok) throw new Error(`HTTP error! status: ${policyEffectsRes.status} for policy_effects`);
+        if (!infrastructureMetricsRes.ok) throw new Error(`HTTP error! status: ${infrastructureMetricsRes.status} for infrastructure_metrics`);
+
+        const carbonDataJson = await carbonRes.json();
+        const globalMetricsJson = await globalMetricsRes.json();
+        const alertsJson = await alertsRes.json();
+        const policyEffectsJson = await policyEffectsRes.json();
+        const infrastructureMetricsJson = await infrastructureMetricsRes.json();
+
+        const formattedCarbonData = carbonDataJson.map(item => ({
+          time: new Date(item.recorded_at).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }),
+          emissions: item.value,
+          reductions: 0
+        }));
+        setCarbonData(formattedCarbonData);
+        setGlobalMetrics(globalMetricsJson);
+        setAlerts(alertsJson);
+        setPolicyEffects(policyEffectsJson);
+        setInfrastructureMetrics(infrastructureMetricsJson);
+
+      } catch (e) {
+        setError(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+    const timeInterval = setInterval(() => {
       setCurrentTime(new Date());
-    }, 5000);
-    return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 정리
+    }, 1000);
+    return () => clearInterval(timeInterval);
   }, []);
 
+  if (loading) {
+    return <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 p-6 text-white text-center">데이터 로딩 중...</div>;
+  }
+
+  if (error) {
+    return <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 p-6 text-red-500 text-center">데이터 로딩 오류: {error.message}</div>;
+  }
+
   // 현실적인 글로벌 지표 (한국 + 연동국가 기준)
-  const globalMetrics = {
-    totalEmissions: 6547329, // 한국 일일 배출량 약 1.8백만톤 + 연동국가
-    reductionRate: 8.7, // 현실적인 감축률
-    activeProjects: 3247, // 전세계 탄소 프로젝트 수
-    tradingVolume: 156432, // 일일 탄소 거래량 (톤)
-    platformUsers: 78934, // 플랫폼 사용자 수
-    dataQuality: 94.2 // 데이터 품질 점수
+  const globalMetricsData = {
+    totalEmissions: carbonData.reduce((sum, item) => sum + item.emissions, 0),
+    reductionRate: globalMetrics.reduction_rate,
+    activeProjects: globalMetrics.active_projects,
+    tradingVolume: globalMetrics.trading_volume,
+    platformUsers: globalMetrics.platform_users,
+    dataQuality: globalMetrics.data_quality
   };
 
-  // 실시간 알림 데이터
-  const alerts = [
-    { 
-      type: 'critical', 
-      title: 'EU CBAM 보고 마감 임박', 
-      message: '2026년 1월 31일 연간 신고 마감 3일 전', 
-      time: '5분 전' 
-    },
-    { 
-      type: 'warning', 
-      title: 'AI 예측 엔진 부하 증가', 
-      message: '동시 예측 요청 85% 도달, 자동 스케일링 중', 
-      time: '12분 전' 
-    },
-    { 
-      type: 'success', 
-      title: '서울시 월간 목표 달성', 
-      message: '12월 감축 목표 112% 달성 (17,890 tCO2)', 
-      time: '1시간 전' 
-    }
-  ];
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 p-6">
@@ -285,7 +455,7 @@ const PlatformControlDashboard = () => {
           />
           <MetricCard
             title="데이터 정확도"
-            value={globalMetrics.dataQuality}
+            value={globalMetricsData.dataQuality}
             unit="%"
             icon={<Icons.Shield />}
             subtitle="ISO 14064 인증"

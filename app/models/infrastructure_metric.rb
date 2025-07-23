@@ -1,0 +1,2 @@
+class InfrastructureMetric < ApplicationRecord
+end

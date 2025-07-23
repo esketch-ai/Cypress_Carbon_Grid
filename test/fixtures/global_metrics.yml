@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  reduction_rate: 1.5
+  active_projects: 1
+  trading_volume: 1
+  platform_users: 1
+  data_quality: 1.5
+
+two:
+  reduction_rate: 1.5
+  active_projects: 1
+  trading_volume: 1
+  platform_users: 1
+  data_quality: 1.5
