@@ -28,7 +28,7 @@ Cypress Carbon Grid is a comprehensive, real-time dashboard for monitoring and m
 This project can be run directly on Replit. 
 
 1.  **Import from GitHub:** Create a new Replit workspace by importing this repository directly from GitHub.
-2.  **Click "Run":** Once the workspace is loaded, click the "Run" button. Replit will automatically install Docker and use `docker-compose` to build and start the application.
+2.  **Click "Run":** Once the workspace is loaded, click the "Run" button. Replit will execute the `bin/replit-start` script, which will wait for Docker to be ready, then build and start the application using `docker-compose`.
 3.  **Set up the database:** When the application is running, open a new shell tab and run the following command to set up the database:
 
     ```bash

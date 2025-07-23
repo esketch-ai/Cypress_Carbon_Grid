@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Exit on error
+set -e
+
+echo "--- Checking Docker status ---"
+# Wait for Docker daemon to be ready
+while ! docker info > /dev/null 2>&1; do
+  echo "Waiting for Docker to start..."
+  sleep 2
+done
+echo "Docker is running."
+
+echo "
+--- Building Docker images (if necessary) ---"
+docker-compose build
+
+echo "
+--- Starting application services ---"
+# The main command that keeps the Replit instance alive
+docker-compose up
+
