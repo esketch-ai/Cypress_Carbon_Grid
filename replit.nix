@@ -6,6 +6,11 @@
     pkgs.libyaml.dev,
     pkgs.pkg-config,
     pkgs.libffi,
-    pkgs.gcc
+    pkgs.gcc,
+    pkgs.docker-compose
   ];
+  services.docker = {
+    enable = true;
+    group = "replit";
+  };
 }
