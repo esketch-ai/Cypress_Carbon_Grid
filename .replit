@@ -1,2 +1,27 @@
-language = "bash"
-run = "./bin/replit-start"
+run = "bash bin/replit-start"
+entrypoint = "bin/replit-start"
+hidden = [".config"]
+
+[nix]
+args = ["--experimental-repl-flake"]
+
+[languages]
+
+[languages.python]
+pattern = "**/{*.py,*.pyw}"
+
+[languages.python.language-server]
+args = ["python", "-m", "pylsp"]
+
+[packager]
+language = "python"
+
+[packager.features]
+package_json = true
+
+[packager.features.apt]
+repl_as_root = true
+
+[deployment]
+build = "./bin/replit-start"
+start = "./bin/replit-start"
