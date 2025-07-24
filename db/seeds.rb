@@ -12,11 +12,11 @@
 # Create sample CarbonData
 puts "Creating sample CarbonData..."
 
-10.times do |i|
-  CarbonData.create!(
-    value: rand(100.0..500.0).round(2),
-    recorded_at: Time.now - (10 - i).days
-  )
+# Generate 365 days of CarbonData
+365.times do |i|
+  CarbonData.find_or_create_by!(recorded_at: Date.today - i.days) do |cd|
+    cd.value = rand(100.0..500.0).round(2)
+  end
 end
 
 puts "Sample CarbonData created successfully!"
@@ -591,13 +591,12 @@ CorporateMetric.find_or_create_by!(id: 1) do |cm|
     { name: 'Scope 2 (간접배출)', value: 89360, color: '#F59E0B', description: '구매 전력 및 스팀 사용으로 인한 간접 배출' },
     { name: 'Scope 3 (가치사슬)', value: 387240, color: '#10B981', description: '원자재 조달, 제품 사용, 폐기 등 가치사슬 배출' }
   ]
-  cm.cbam_data = [
-    { month: '7월', exports: 1800, emissions: 350, certificates: 300 },
-    { month: '8월', exports: 1900, emissions: 380, certificates: 320 },
-    { month: '9월', exports: 1700, emissions: 320, certificates: 280 },
-    { month: '10월', exports: 2000, emissions: 400, certificates: 350 },
-    { month: '11월', exports: 2100, emissions: 420, certificates: 380 },
-    { month: '12월', exports: 2200, emissions: 450, certificates: 400 }
+    cm.cbam_data = cbam_data_array
+
+  cm.carbon_scope = [
+    { name: 'Scope 1 (직접배출)', value: 23450, color: '#EF4444', description: '사업장 연료 연소, 제조공정 등 직접 배출' },
+    { name: 'Scope 2 (간접배출)', value: 89360, color: '#F59E0B', description: '구매 전력 및 스팀 사용으로 인한 간접 배출' },
+    { name: 'Scope 3 (가치사슬)', value: 387240, color: '#10B981', description: '원자재 조달, 제품 사용, 폐기 등 가치사슬 배출' }
   ]
   cm.supply_chain_data = {
     totalSuppliers: 847,
@@ -621,20 +620,20 @@ puts "Sample CorporateMetric created successfully!"
 # Create sample AssociationMetric
 puts "Creating sample AssociationMetric..."
 AssociationMetric.find_or_create_by!(id: 1) do |am|
-  am.member_data = [
-    { month: '1월', totalMembers: 4870000, activeMembers: 3980000, newMembers: 5000 },
-    { month: '2월', totalMembers: 4885000, activeMembers: 3992000, newMembers: 6000 },
-    { month: '3월', totalMembers: 4900000, activeMembers: 4004000, newMembers: 7000 },
-    { month: '4월', totalMembers: 4915000, activeMembers: 4016000, newMembers: 8000 },
-    { month: '5월', totalMembers: 4930000, activeMembers: 4028000, newMembers: 9000 },
-    { month: '6월', totalMembers: 4945000, activeMembers: 4040000, newMembers: 10000 },
-    { month: '7월', totalMembers: 4960000, activeMembers: 4052000, newMembers: 11000 },
-    { month: '8월', totalMembers: 4975000, activeMembers: 4064000, newMembers: 12000 },
-    { month: '9월', totalMembers: 4990000, activeMembers: 4076000, newMembers: 13000 },
-    { month: '10월', totalMembers: 5005000, activeMembers: 4088000, newMembers: 14000 },
-    { month: '11월', totalMembers: 5020000, activeMembers: 4100000, newMembers: 15000 },
-    { month: '12월', totalMembers: 5035000, activeMembers: 4112000, newMembers: 16000 }
-  ]
+  # Generate 12 months of member data
+  member_data_array = []
+  (1..12).each do |month_num|
+    member_data_array << {
+      month: "#{month_num}월",
+      totalMembers: 4870000 + month_num * 15000 + rand(0..8000),
+      activeMembers: 3980000 + month_num * 12000 + rand(0..5000),
+      newMembers: rand(5000..20000)
+    }
+  end
+  am.member_data = member_data_array
+
+  am.member_data = member_data_array
+
   am.regional_performance = [
     {
       region: '서울/경기',
