@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_23_083405) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_24_011601) do
   create_table "alerts", force: :cascade do |t|
     t.string "alert_type"
     t.string "title"
@@ -34,6 +34,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_083405) do
     t.float "data_quality"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "total_emissions"
   end
 
   create_table "infrastructure_metrics", force: :cascade do |t|

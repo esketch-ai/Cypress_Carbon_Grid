@@ -377,7 +377,7 @@ const PlatformControlDashboard = () => {
 
   // 현실적인 글로벌 지표 (한국 + 연동국가 기준)
   const globalMetricsData = {
-    totalEmissions: carbonData.reduce((sum, item) => sum + item.emissions, 0),
+    totalEmissions: globalMetrics.total_emissions,
     reductionRate: globalMetrics.reduction_rate,
     activeProjects: globalMetrics.active_projects,
     tradingVolume: globalMetrics.trading_volume,

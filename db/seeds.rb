@@ -29,6 +29,7 @@ GlobalMetric.find_or_create_by!(id: 1) do |gm|
   gm.trading_volume = 156432
   gm.platform_users = 78934
   gm.data_quality = 94.2
+  gm.total_emissions = 55000000 # 예시 값
 end
 puts "Sample GlobalMetric created successfully!"
 
