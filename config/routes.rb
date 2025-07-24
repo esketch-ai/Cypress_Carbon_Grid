@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
+      resources :association_metrics, only: [:index]
+      resources :corporate_metrics, only: [:index]
       resources :municipalities, only: [:index]
       resources :carbon_data, only: [:index]
       resources :global_metrics, only: [:index]

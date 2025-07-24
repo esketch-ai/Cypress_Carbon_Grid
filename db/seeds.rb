@@ -576,3 +576,101 @@ municipalities_data.each do |data|
 end
 
 puts "Sample Municipalities created successfully!"
+
+# Create sample CorporateMetric
+puts "Creating sample CorporateMetric..."
+CorporateMetric.find_or_create_by!(id: 1) do |cm|
+  cm.esg_scores = {
+    overall: 78.4,
+    environmental: 81.2,
+    social: 74.1,
+    governance: 79.9
+  }
+  cm.carbon_scope = [
+    { name: 'Scope 1 (직접배출)', value: 23450, color: '#EF4444', description: '사업장 연료 연소, 제조공정 등 직접 배출' },
+    { name: 'Scope 2 (간접배출)', value: 89360, color: '#F59E0B', description: '구매 전력 및 스팀 사용으로 인한 간접 배출' },
+    { name: 'Scope 3 (가치사슬)', value: 387240, color: '#10B981', description: '원자재 조달, 제품 사용, 폐기 등 가치사슬 배출' }
+  ]
+  cm.cbam_data = [
+    { month: '7월', exports: 1800, emissions: 350, certificates: 300 },
+    { month: '8월', exports: 1900, emissions: 380, certificates: 320 },
+    { month: '9월', exports: 1700, emissions: 320, certificates: 280 },
+    { month: '10월', exports: 2000, emissions: 400, certificates: 350 },
+    { month: '11월', exports: 2100, emissions: 420, certificates: 380 },
+    { month: '12월', exports: 2200, emissions: 450, certificates: 400 }
+  ]
+  cm.supply_chain_data = {
+    totalSuppliers: 847,
+    assessedSuppliers: 731,
+    highRiskSuppliers: [
+      { name: '대성부품', location: '중국 상하이', riskLevel: 'high', esgScore: 42.3, issues: ['환경규제 위반', '근로자 안전'] },
+      { name: '글로벌소재', location: '베트남 하노이', riskLevel: 'medium', esgScore: 61.8, issues: ['탄소공시 부족'] },
+      { name: '스마트칩스', location: '말레이시아 KL', riskLevel: 'medium', esgScore: 67.2, issues: ['재생에너지 전환 지연'] },
+      { name: '퓨처메탈', location: '태국 방콕', riskLevel: 'low', esgScore: 73.4, issues: ['소규모 개선사항'] }
+    ],
+    categoryRisks: [
+      { category: '반도체', suppliers: 89, avgRisk: 'medium', mainIssues: '탄소집약적 제조공정' },
+      { category: '디스플레이', suppliers: 67, avgRisk: 'high', mainIssues: '희토류 사용, 폐수 처리' },
+      { category: '배터리', suppliers: 45, avgRisk: 'high', mainIssues: '리튬 채굴, 재활용' },
+      { category: '플라스틱', suppliers: 156, avgRisk: 'medium', mainIssues: '재활용률, 바이오 소재 전환' }
+    ]
+  }
+end
+puts "Sample CorporateMetric created successfully!"
+
+# Create sample AssociationMetric
+puts "Creating sample AssociationMetric..."
+AssociationMetric.find_or_create_by!(id: 1) do |am|
+  am.member_data = [
+    { month: '1월', totalMembers: 4870000, activeMembers: 3980000, newMembers: 5000 },
+    { month: '2월', totalMembers: 4885000, activeMembers: 3992000, newMembers: 6000 },
+    { month: '3월', totalMembers: 4900000, activeMembers: 4004000, newMembers: 7000 },
+    { month: '4월', totalMembers: 4915000, activeMembers: 4016000, newMembers: 8000 },
+    { month: '5월', totalMembers: 4930000, activeMembers: 4028000, newMembers: 9000 },
+    { month: '6월', totalMembers: 4945000, activeMembers: 4040000, newMembers: 10000 },
+    { month: '7월', totalMembers: 4960000, activeMembers: 4052000, newMembers: 11000 },
+    { month: '8월', totalMembers: 4975000, activeMembers: 4064000, newMembers: 12000 },
+    { month: '9월', totalMembers: 4990000, activeMembers: 4076000, newMembers: 13000 },
+    { month: '10월', totalMembers: 5005000, activeMembers: 4088000, newMembers: 14000 },
+    { month: '11월', totalMembers: 5020000, activeMembers: 4100000, newMembers: 15000 },
+    { month: '12월', totalMembers: 5035000, activeMembers: 4112000, newMembers: 16000 }
+  ]
+  am.regional_performance = [
+    {
+      region: '서울/경기',
+      members: 1250000,
+      energySavingRate: 12.5,
+      recyclingRate: 85.2,
+      description: '수도권 지역은 인구 밀도가 높아 1인당 에너지 절약 성과가 높게 나타납니다.'
+    },
+    {
+      region: '강원/충청',
+      members: 890000,
+      energySavingRate: 15.2,
+      recyclingRate: 89.1,
+      description: '농촌 지역의 적극적인 참여로 재활용 및 자원순환 활동이 활발합니다.'
+    },
+    {
+      region: '전라/제주',
+      members: 780000,
+      energySavingRate: 14.8,
+      recyclingRate: 91.3,
+      description: '청정 지역 특성을 살린 친환경 캠페인이 높은 참여율을 보입니다.'
+    },
+    {
+      region: '경상',
+      members: 1150000,
+      energySavingRate: 13.1,
+      recyclingRate: 87.5,
+      description: '새마을 운동 발상지로서, 조직적인 활동을 통해 높은 성과를 유지하고 있습니다.'
+    },
+  ]
+  am.activity_utilization = [
+    { name: '새마을의 날 기념행사', usage: 88.2, satisfaction: 4.8, participants: 120500 },
+    { name: '에너지 절약 교육', usage: 65.4, satisfaction: 4.5, participants: 897000 },
+    { name: '재활용 캠페인', usage: 92.1, satisfaction: 4.7, participants: 1543000 },
+    { name: '지역사회 봉사', usage: 78.9, satisfaction: 4.6, participants: 1125000 },
+    { name: '탄소중립 실천 인증', usage: 45.3, satisfaction: 4.3, participants: 458000 }
+  ]
+end
+puts "Sample AssociationMetric created successfully!"

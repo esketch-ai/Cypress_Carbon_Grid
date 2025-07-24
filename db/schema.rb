@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_24_011601) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_24_012014) do
   create_table "alerts", force: :cascade do |t|
     t.string "alert_type"
     t.string "title"
@@ -19,9 +19,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_24_011601) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "association_metrics", force: :cascade do |t|
+    t.json "member_data"
+    t.json "regional_performance"
+    t.json "activity_utilization"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "carbon_data", force: :cascade do |t|
     t.float "value"
     t.datetime "recorded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "corporate_metrics", force: :cascade do |t|
+    t.json "esg_scores"
+    t.json "carbon_scope"
+    t.json "cbam_data"
+    t.json "supply_chain_data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

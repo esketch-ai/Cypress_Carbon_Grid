@@ -564,50 +564,44 @@ const PlatformControlDashboard = () => {
 // 3. 기업 ESG 대시보드 컴포넌트
 // 기업의 ESG 성과, 탄소 배출량, CBAM 대응 현황, 공급망 ESG 리스크 등을 관리합니다.
 const CorporateESGDashboard = () => {
-  const [selectedView, setSelectedView] = useState('overview'); // 현재 선택된 탭
+  const [selectedView, setSelectedView] = useState('overview');
+  const [corporateMetrics, setCorporateMetrics] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // 새미전자 ESG 점수 (전자업체 평균 기준)
-  const esgScores = {
-    overall: 78.4, // B+ 등급
-    environmental: 81.2,
-    social: 74.1,
-    governance: 79.9
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch('/api/v1/corporate_metrics');
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+        setCorporateMetrics(data);
+      } catch (e) {
+        setError(e);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // 전자업체 현실적인 탄소 배출량 (Scope별)
-  const carbonScope = [
-    { name: 'Scope 1 (직접배출)', value: 23450, color: '#EF4444', description: '사업장 연료 연소, 제조공정 등 직접 배출' },
-    { name: 'Scope 2 (간접배출)', value: 89360, color: '#F59E0B', description: '구매 전력 및 스팀 사용으로 인한 간접 배출' },
-    { name: 'Scope 3 (가치사슬)', value: 387240, color: '#10B981', description: '원자재 조달, 제품 사용, 폐기 등 가치사슬 배출' }
-  ];
+    fetchData();
+  }, []);
 
-  // CBAM 수출 데이터 (전자 부품 기준)
-  const cbamData = useMemo(() => 
-    Array.from({ length: 6 }, (_, i) => ({
-      month: `${7 + i}월`,
-      exports: Math.floor(Math.random() * 2000) + 1500, // 전자부품 월 수출량 (톤)
-      emissions: Math.floor(Math.random() * 400) + 300, // 내재배출량 (tCO2)
-      certificates: Math.floor(Math.random() * 350) + 280 // 필요 인증서 (tCO2)
-    })), []
-  );
+  if (loading) {
+    return <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 p-6 text-white text-center">데이터 로딩 중...</div>;
+  }
 
-  // 공급망 ESG 데이터
-  const supplyChainData = {
-    totalSuppliers: 847,
-    assessedSuppliers: 731,
-    highRiskSuppliers: [
-      { name: '대성부품', location: '중국 상하이', riskLevel: 'high', esgScore: 42.3, issues: ['환경규제 위반', '근로자 안전'] },
-      { name: '글로벌소재', location: '베트남 하노이', riskLevel: 'medium', esgScore: 61.8, issues: ['탄소공시 부족'] },
-      { name: '스마트칩스', location: '말레이시아 KL', riskLevel: 'medium', esgScore: 67.2, issues: ['재생에너지 전환 지연'] },
-      { name: '퓨처메탈', location: '태국 방콕', riskLevel: 'low', esgScore: 73.4, issues: ['소규모 개선사항'] }
-    ],
-    categoryRisks: [
-      { category: '반도체', suppliers: 89, avgRisk: 'medium', mainIssues: '탄소집약적 제조공정' },
-      { category: '디스플레이', suppliers: 67, avgRisk: 'high', mainIssues: '희토류 사용, 폐수 처리' },
-      { category: '배터리', suppliers: 45, avgRisk: 'high', mainIssues: '리튬 채굴, 재활용' },
-      { category: '플라스틱', suppliers: 156, avgRisk: 'medium', mainIssues: '재활용률, 바이오 소재 전환' }
-    ]
-  };
+  if (error) {
+    return <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 p-6 text-red-500 text-center">데이터 로딩 오류: {error.message}</div>;
+  }
+
+  if (!corporateMetrics) {
+    return <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 p-6 text-white text-center">기업 ESG 데이터를 찾을 수 없습니다.</div>;
+  }
+
+  const esgScores = corporateMetrics.esg_scores;
+  const carbonScope = corporateMetrics.carbon_scope;
+  const cbamData = corporateMetrics.cbam_data;
+  const supplyChainData = corporateMetrics.supply_chain_data;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 p-6">
@@ -1184,56 +1178,42 @@ const CorporateESGDashboard = () => {
 // 4. 새마을중앙회 대시보드 컴포넌트
 // 새마을운동의 탄소중립 실천 현황, 회원 수, 지역별 성과 등을 보여줍니다.
 const AssociationDashboard = () => {
-  // 월별 회원 데이터
-  const memberData = useMemo(() =>
-    Array.from({ length: 12 }, (_, i) => ({
-      month: `${i + 1}월`,
-      totalMembers: 4870000 + i * 15000 + Math.floor(Math.random() * 8000),
-      activeMembers: 3980000 + i * 12000 + Math.floor(Math.random() * 5000),
-      newMembers: Math.floor(Math.random() * 20000) + 5000
-    })), []
-  );
+  const [associationMetrics, setAssociationMetrics] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // 지역별 새마을 운동 현황 데이터
-  const regionalPerformance = [
-    {
-      region: '서울/경기',
-      members: 1250000,
-      energySavingRate: 12.5,
-      recyclingRate: 85.2,
-      description: '수도권 지역은 인구 밀도가 높아 1인당 에너지 절약 성과가 높게 나타납니다.'
-    },
-    {
-      region: '강원/충청',
-      members: 890000,
-      energySavingRate: 15.2,
-      recyclingRate: 89.1,
-      description: '농촌 지역의 적극적인 참여로 재활용 및 자원순환 활동이 활발합니다.'
-    },
-    {
-      region: '전라/제주',
-      members: 780000,
-      energySavingRate: 14.8,
-      recyclingRate: 91.3,
-      description: '청정 지역 특성을 살린 친환경 캠페인이 높은 참여율을 보입니다.'
-    },
-    {
-      region: '경상',
-      members: 1150000,
-      energySavingRate: 13.1,
-      recyclingRate: 87.5,
-      description: '새마을 운동 발상지로서, 조직적인 활동을 통해 높은 성과를 유지하고 있습니다.'
-    },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch('/api/v1/association_metrics');
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+        setAssociationMetrics(data);
+      } catch (e) {
+        setError(e);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // 주요 활동 참여율 및 만족도 데이터
-  const activityUtilization = [
-    { name: '새마을의 날 기념행사', usage: 88.2, satisfaction: 4.8, participants: 120500 },
-    { name: '에너지 절약 교육', usage: 65.4, satisfaction: 4.5, participants: 897000 },
-    { name: '재활용 캠페인', usage: 92.1, satisfaction: 4.7, participants: 1543000 },
-    { name: '지역사회 봉사', usage: 78.9, satisfaction: 4.6, participants: 1125000 },
-    { name: '탄소중립 실천 인증', usage: 45.3, satisfaction: 4.3, participants: 458000 }
-  ];
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-yellow-900 p-6 text-white text-center">데이터 로딩 중...</div>;
+  }
+
+  if (error) {
+    return <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-yellow-900 p-6 text-red-500 text-center">데이터 로딩 오류: {error.message}</div>;
+  }
+
+  if (!associationMetrics) {
+    return <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-yellow-900 p-6 text-white text-center">새마을중앙회 데이터를 찾을 수 없습니다.</div>;
+  }
+
+  const memberData = associationMetrics.member_data;
+  const regionalPerformance = associationMetrics.regional_performance;
+  const activityUtilization = associationMetrics.activity_utilization;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-yellow-900 p-6">
