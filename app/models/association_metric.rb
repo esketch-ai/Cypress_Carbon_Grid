@@ -1,0 +1,2 @@
+class AssociationMetric < ApplicationRecord
+end

@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  esg_scores: MyText
+  carbon_scope: MyText
+  cbam_data: MyText
+  supply_chain_data: MyText
+
+two:
+  esg_scores: MyText
+  carbon_scope: MyText
+  cbam_data: MyText
+  supply_chain_data: MyText

@@ -1,0 +1,2 @@
+class CorporateMetric < ApplicationRecord
+end
