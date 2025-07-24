@@ -1,5 +1,4 @@
 run = "bash bin/replit-start"
-entrypoint = "bin/replit-start"
 hidden = [".config"]
 
 [nix]
@@ -23,5 +22,4 @@ package_json = true
 repl_as_root = true
 
 [deployment]
-build = "./bin/replit-start"
 start = "./bin/replit-start"
