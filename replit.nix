@@ -5,12 +5,7 @@
     pkgs.pkg-config
     pkgs.libffi
     pkgs.gcc
-    pkgs.docker-compose
     pkgs.nodejs
     pkgs.sqlite
   ];
-  services.docker = {
-    enable = true;
-    group = "replit";
-  };
 }

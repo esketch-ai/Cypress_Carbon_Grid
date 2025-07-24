@@ -4,22 +4,5 @@ hidden = [".config"]
 [nix]
 args = ["--experimental-repl-flake"]
 
-[languages]
-
-[languages.python]
-pattern = "**/{*.py,*.pyw}"
-
-[languages.python.language-server]
-args = ["python", "-m", "pylsp"]
-
-[packager]
-language = "python"
-
-[packager.features]
-package_json = true
-
-[packager.features.apt]
-repl_as_root = true
-
 [deployment]
 start = "./bin/replit-start"
