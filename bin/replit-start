@@ -11,7 +11,16 @@ function is_port_in_use() {
 # Get the primary port from Replit environment, default to 3000 if not set
 REPLIT_APP_PORT=${PORT:-3000}
 RAILS_PORT=$REPLIT_APP_PORT
-REACT_PORT=$((REPLIT_APP_PORT + 1))
+
+# Build React frontend and copy to Rails public directory
+echo "Building React frontend..."
+cd carbon_grid
+npm install
+npm run build
+rm -rf ../public/static # Remove old static assets if any
+cp -r build/* ../public/
+cd ..
+echo "React frontend built and copied to Rails public directory."
 
 # Start Rails backend
 if is_port_in_use $RAILS_PORT; then
@@ -31,19 +40,6 @@ else
     sleep 5
   done
   echo "Rails server is up!"
-fi
-
-# Start React frontend
-if is_port_in_use $REACT_PORT; then
-  echo "React development server already running on port $REACT_PORT."
-else
-  echo "Starting React development server..."
-  cd carbon_grid
-  npm install
-  DANGEROUSLY_DISABLE_HOST_CHECK=true PORT=$REACT_PORT npm start &
-  REACT_PID=$!
-  echo "React development server started with PID $REACT_PID on port $REACT_PORT"
-  cd ..
 fi
 
 # Keep the script running to keep the Replit environment alive
