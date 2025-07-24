@@ -8,30 +8,41 @@ function is_port_in_use() {
   lsof -i :$1 > /dev/null
 }
 
+# Get the primary port from Replit environment, default to 3000 if not set
+REPLIT_APP_PORT=${PORT:-3000}
+RAILS_PORT=$REPLIT_APP_PORT
+REACT_PORT=$((REPLIT_APP_PORT + 1))
+
 # Start Rails backend
-if is_port_in_use 3000; then
-  echo "Rails server already running on port 3000."
+if is_port_in_use $RAILS_PORT; then
+  echo "Rails server already running on port $RAILS_PORT."
 else
   echo "Starting Rails server..."
   bundle config set --local path vendor/bundle
   bundle install
   rails db:migrate
   rails db:seed
-  rails s -p 3000 -b 0.0.0.0 &
+  rails s -p $RAILS_PORT -b 0.0.0.0 &
   RAILS_PID=$!
-  echo "Rails server started with PID $RAILS_PID"
+  echo "Rails server started with PID $RAILS_PID on port $RAILS_PORT"
+  # Wait for Rails server to be ready
+  until curl -s http://localhost:$RAILS_PORT/up > /dev/null; do
+    echo "Waiting for Rails server to start on port $RAILS_PORT..."
+    sleep 5
+  done
+  echo "Rails server is up!"
 fi
 
 # Start React frontend
-if is_port_in_use 3001; then
-  echo "React development server already running on port 3001."
+if is_port_in_use $REACT_PORT; then
+  echo "React development server already running on port $REACT_PORT."
 else
   echo "Starting React development server..."
   cd carbon_grid
   npm install
-  DANGEROUSLY_DISABLE_HOST_CHECK=true PORT=3001 npm start &
+  DANGEROUSLY_DISABLE_HOST_CHECK=true PORT=$REACT_PORT npm start &
   REACT_PID=$!
-  echo "React development server started with PID $REACT_PID"
+  echo "React development server started with PID $REACT_PID on port $REACT_PORT"
   cd ..
 fi
 
