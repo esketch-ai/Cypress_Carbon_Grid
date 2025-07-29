@@ -21,89 +21,105 @@ end
 
 puts "Sample CarbonData created successfully!"
 
-# Create sample GlobalMetric
-puts "Creating sample GlobalMetric..."
-GlobalMetric.find_or_create_by!(id: 1) do |gm|
-  gm.reduction_rate = 8.7
-  gm.active_projects = 3247
-  gm.trading_volume = 156432
-  gm.platform_users = 78934
-  gm.data_quality = 94.2
-  gm.total_emissions = 55000000 # 예시 값
-end
-puts "Sample GlobalMetric created successfully!"
+# Create or update sample GlobalMetric
+puts "Creating or updating sample GlobalMetric..."
+GlobalMetric.find_or_initialize_by(id: 1).update!(
+  reduction_rate: 8.7,
+  active_projects: 3247,
+  trading_volume: 156432,
+  platform_users: 78934,
+  data_quality: 94.2,
+  total_emissions: 55000000 # 예시 값
+)
+puts "Sample GlobalMetric created or updated successfully!"
 
-# Create sample Alerts
-puts "Creating sample Alerts..."
-Alert.find_or_create_by!(title: 'EU CBAM 보고 마감 임박') do |alert|
-  alert.alert_type = 'critical'
-  alert.message = '2026년 1월 31일 연간 신고 마감 3일 전'
-  alert.created_at = Time.now - 5.minutes
-end
-Alert.find_or_create_by!(title: 'AI 예측 엔진 부하 증가') do |alert|
-  alert.alert_type = 'warning'
-  alert.message = '동시 예측 요청 85% 도달, 자동 스케일링 중'
-  alert.created_at = Time.now - 12.minutes
-end
-Alert.find_or_create_by!(title: '서울시 월간 목표 달성') do |alert|
-  alert.alert_type = 'success'
-  alert.message = '12월 감축 목표 112% 달성 (17,890 tCO2)'
-  alert.created_at = Time.now - 1.hour
-end
-puts "Sample Alerts created successfully!"
+# Create or update sample Alerts
+puts "Creating or updating sample Alerts..."
+alerts_data = [
+  { title: 'EU CBAM 보고 마감 임박', alert_type: 'critical', message: '2026년 1월 31일 연간 신고 마감 3일 전' },
+  { title: 'AI 예측 엔진 부하 증가', alert_type: 'warning', message: '동시 예측 요청 85% 도달, 자동 스케일링 중' },
+  { title: '서울시 월간 목표 달성', alert_type: 'success', message: '12월 감축 목표 112% 달성 (17,890 tCO2)' }
+]
 
-# Create sample PolicyEffects
-puts "Creating sample PolicyEffects..."
-PolicyEffect.find_or_create_by!(name: '친환경차 구매 지원') do |pe|
-  pe.budget = '약 850억원'
-  pe.reduction = '47,300 tCO2/년'
-  pe.efficiency = '180만원/tCO2'
-  pe.status = 'success'
-  pe.description = '전기차 구매보조금, 충전인프라 구축 등을 통해 수송부문 배출량을 연간 4.7만톤 감축했습니다.'
+alerts_data.each do |data|
+  alert = Alert.find_or_initialize_by(title: data[:title])
+  alert.update!(data.merge(created_at: Time.now))
 end
-PolicyEffect.find_or_create_by!(name: '건물 에너지효율 개선') do |pe|
-  pe.budget = '약 1,240억원'
-  pe.reduction = '89,600 tCO2/년'
-  pe.efficiency = '138만원/tCO2'
-  pe.status = 'success'
-  pe.description = 'BRP(건물 리노베이션 사업)을 통해 노후 건물의 에너지효율을 평균 32% 개선했습니다.'
-end
-PolicyEffect.find_or_create_by!(name: '대중교통 전환 확대') do |pe|
-  pe.budget = '약 2,180억원'
-  pe.reduction = '156,800 tCO2/년'
-  pe.efficiency = '139만원/tCO2'
-  pe.status = 'progress'
-  pe.description = '지하철 연장, 전기버스 도입, 자전거 도로 확충으로 대중교통 분담률을 68%까지 높였습니다.'
-end
-puts "Sample PolicyEffects created successfully!"
+puts "Sample Alerts created or updated successfully!"
 
-# Create sample InfrastructureMetrics
-puts "Creating sample InfrastructureMetrics..."
-InfrastructureMetric.find_or_create_by!(name: '태양광 발전') do |im|
-  im.value = '673'
-  im.unit = 'MW'
-  im.change = '+84 MW vs 2023년'
-  im.description = '서울시 전체 태양광 설치 용량입니다. 가정용 미니태양광, 건물일체형(BIPV), 수상태양광을 포함합니다.'
+# Create or update sample PolicyEffects
+puts "Creating or updating sample PolicyEffects..."
+policy_effects_data = [
+  {
+    name: '친환경차 구매 지원',
+    budget: '약 950억원',
+    reduction: '47,300 tCO2/년',
+    efficiency: '180만원/tCO2',
+    status: 'success',
+    description: '전기차 구매보조금, 충전인프라 구축 등을 통해 수송부문 배출량을 연간 4.7만톤 감축했습니다.'
+  },
+  {
+    name: '건물 에너지효율 개선',
+    budget: '약 1,240억원',
+    reduction: '89,600 tCO2/년',
+    efficiency: '138만원/tCO2',
+    status: 'success',
+    description: 'BRP(건물 리노베이션 사업)을 통해 노후 건물의 에너지효율을 평균 32% 개선했습니다.'
+  },
+  {
+    name: '대중교통 전환 확대',
+    budget: '약 2,180억원',
+    reduction: '156,800 tCO2/년',
+    efficiency: '139만원/tCO2',
+    status: 'progress',
+    description: '지하철 연장, 전기버스 도입, 자전거 도로 확충으로 대중교통 분담률을 68%까지 높였습니다.'
+  }
+]
+
+policy_effects_data.each do |data|
+  policy_effect = PolicyEffect.find_or_initialize_by(name: data[:name])
+  policy_effect.update!(data)
 end
-InfrastructureMetric.find_or_create_by!(name: '전기버스') do |im|
-  im.value = '1,247'
-  im.unit = '대'
-  im.change = '전체의 15.7%'
-  im.description = '서울시 시내버스 중 전기버스 비율입니다. 2026년까지 50% 전환을 목표로 하고 있습니다.'
+puts "Sample PolicyEffects created or updated successfully!"
+
+# Create or update sample InfrastructureMetrics
+puts "Creating or updating sample InfrastructureMetrics..."
+infrastructure_metrics_data = [
+  {
+    name: '태양광 발전',
+    value: '673',
+    unit: 'MW',
+    change: '+84 MW vs 2023년',
+    description: '서울시 전체 태양광 설치 용량입니다. 가정용 미니태양광, 건물일체형(BIPV), 수상태양광을 포함합니다.'
+  },
+  {
+    name: '전기버스',
+    value: '1,247',
+    unit: '대',
+    change: '전체의 15.7%',
+    description: '서울시 시내버스 중 전기버스 비율입니다. 2026년까지 50% 전환을 목표로 하고 있습니다.'
+  },
+  {
+    name: '전기차 충전소',
+    value: '4,589',
+    unit: '기',
+    change: '이용률 71.3%',
+    description: '급속충전 2,340기, 완속충전 2,249기로 구성됩니다. 주요 거점과 주거지역을 중심으로 배치되었습니다.'
+  },
+  {
+    name: '녹색건물 인증',
+    value: '2,847',
+    unit: '동',
+    change: 'G-SEED 인증',
+    description: '녹색건축인증(G-SEED)을 받은 건물 수입니다. 에너지 효율 등급 1등급 이상 건물이 78%를 차지합니다.'
+  }
+]
+
+infrastructure_metrics_data.each do |data|
+  infra_metric = InfrastructureMetric.find_or_initialize_by(name: data[:name])
+  infra_metric.update!(data)
 end
-InfrastructureMetric.find_or_create_by!(name: '전기차 충전소') do |im|
-  im.value = '4,589'
-  im.unit = '기'
-  im.change = '이용률 71.3%'
-  im.description = '급속충전 2,340기, 완속충전 2,249기로 구성됩니다. 주요 거점과 주거지역을 중심으로 배치되었습니다.'
-end
-InfrastructureMetric.find_or_create_by!(name: '녹색건물 인증') do |im|
-  im.value = '2,847'
-  im.unit = '동'
-  im.change = 'G-SEED 인증'
-  im.description = '녹색건축인증(G-SEED)을 받은 건물 수입니다. 에너지 효율 등급 1등급 이상 건물이 78%를 차지합니다.'
-end
-puts "Sample InfrastructureMetrics created successfully!"
+puts "Sample InfrastructureMetrics created or updated successfully!"
 
 municipalities_data = [
   {
@@ -557,48 +573,30 @@ municipalities_data = [
   }
 ]
 
-puts "Creating sample Municipalities..."
+puts "Creating or updating sample Municipalities..."
 
 municipalities_data.each do |data|
-  Municipality.find_or_create_by!(name: data[:name]) do |municipality|
-    municipality.population = data[:population]
-    municipality.area = data[:area]
-    municipality.carbon_emission = data[:carbon_emission]
-    municipality.reduction_target = data[:reduction_target]
-    municipality.current_reduction = data[:current_reduction]
-    municipality.budget = data[:budget]
-    municipality.renewable_energy_rate = data[:renewable_energy_rate]
-    municipality.public_transport_rate = data[:public_transport_rate]
-    municipality.projects = data[:projects]
-    municipality.sector_emissions = data[:sector_emissions]
-    municipality.citizen_participation = data[:citizen_participation]
-  end
+  municipality = Municipality.find_or_initialize_by(name: data[:name])
+  municipality.update!(data)
 end
 
-puts "Sample Municipalities created successfully!"
+puts "Sample Municipalities created or updated successfully!"
 
-# Create sample CorporateMetric
-puts "Creating sample CorporateMetric..."
-CorporateMetric.find_or_create_by!(id: 1) do |cm|
-  cm.esg_scores = {
+# Create or update sample CorporateMetric
+puts "Creating or updating sample CorporateMetric..."
+CorporateMetric.find_or_initialize_by(id: 1).update!(
+  esg_scores: {
     overall: 78.4,
     environmental: 81.2,
     social: 74.1,
     governance: 79.9
-  }
-  cm.carbon_scope = [
+  },
+  carbon_scope: [
     { name: 'Scope 1 (직접배출)', value: 23450, color: '#EF4444', description: '사업장 연료 연소, 제조공정 등 직접 배출' },
     { name: 'Scope 2 (간접배출)', value: 89360, color: '#F59E0B', description: '구매 전력 및 스팀 사용으로 인한 간접 배출' },
     { name: 'Scope 3 (가치사슬)', value: 387240, color: '#10B981', description: '원자재 조달, 제품 사용, 폐기 등 가치사슬 배출' }
-  ]
-    cm.cbam_data = cbam_data_array
-
-  cm.carbon_scope = [
-    { name: 'Scope 1 (직접배출)', value: 23450, color: '#EF4444', description: '사업장 연료 연소, 제조공정 등 직접 배출' },
-    { name: 'Scope 2 (간접배출)', value: 89360, color: '#F59E0B', description: '구매 전력 및 스팀 사용으로 인한 간접 배출' },
-    { name: 'Scope 3 (가치사슬)', value: 387240, color: '#10B981', description: '원자재 조달, 제품 사용, 폐기 등 가치사슬 배출' }
-  ]
-  cm.supply_chain_data = {
+  ],
+  supply_chain_data: {
     totalSuppliers: 847,
     assessedSuppliers: 731,
     highRiskSuppliers: [
@@ -614,27 +612,27 @@ CorporateMetric.find_or_create_by!(id: 1) do |cm|
       { category: '플라스틱', suppliers: 156, avgRisk: 'medium', mainIssues: '재활용률, 바이오 소재 전환' }
     ]
   }
+)
+puts "Sample CorporateMetric created or updated successfully!"
+
+# Create or update sample AssociationMetric
+puts "Creating or updating sample AssociationMetric..."
+association_metric = AssociationMetric.find_or_initialize_by(id: 1)
+
+# Generate 12 months of member data
+member_data_array = []
+(1..12).each do |month_num|
+  member_data_array << {
+    month: "#{month_num}월",
+    totalMembers: 4870000 + month_num * 15000 + rand(0..8000),
+    activeMembers: 3980000 + month_num * 12000 + rand(0..5000),
+    newMembers: rand(5000..20000)
+  }
 end
-puts "Sample CorporateMetric created successfully!"
 
-# Create sample AssociationMetric
-puts "Creating sample AssociationMetric..."
-AssociationMetric.find_or_create_by!(id: 1) do |am|
-  # Generate 12 months of member data
-  member_data_array = []
-  (1..12).each do |month_num|
-    member_data_array << {
-      month: "#{month_num}월",
-      totalMembers: 4870000 + month_num * 15000 + rand(0..8000),
-      activeMembers: 3980000 + month_num * 12000 + rand(0..5000),
-      newMembers: rand(5000..20000)
-    }
-  end
-  am.member_data = member_data_array
-
-  am.member_data = member_data_array
-
-  am.regional_performance = [
+association_metric.update!(
+  member_data: member_data_array,
+  regional_performance: [
     {
       region: '서울/경기',
       members: 1250000,
@@ -663,13 +661,13 @@ AssociationMetric.find_or_create_by!(id: 1) do |am|
       recyclingRate: 87.5,
       description: '새마을 운동 발상지로서, 조직적인 활동을 통해 높은 성과를 유지하고 있습니다.'
     },
-  ]
-  am.activity_utilization = [
+  ],
+  activity_utilization: [
     { name: '새마을의 날 기념행사', usage: 88.2, satisfaction: 4.8, participants: 120500 },
     { name: '에너지 절약 교육', usage: 65.4, satisfaction: 4.5, participants: 897000 },
     { name: '재활용 캠페인', usage: 92.1, satisfaction: 4.7, participants: 1543000 },
     { name: '지역사회 봉사', usage: 78.9, satisfaction: 4.6, participants: 1125000 },
     { name: '탄소중립 실천 인증', usage: 45.3, satisfaction: 4.3, participants: 458000 }
   ]
-end
-puts "Sample AssociationMetric created successfully!"
+)
+puts "Sample AssociationMetric created or updated successfully!"
